@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Pattern Analytics</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap');
+
+*{box-sizing:border-box}
+:root{
+  --bg:#f3f5f1;
+  --surface:#ffffff;
+  --surface-2:#f8faf7;
+  --text:#182018;
+  --muted:#687166;
+  --line:#dfe5dc;
+  --green:#356b4a;
+  --green-2:#5d8b69;
+  --green-soft:#e7f0e8;
+  --dark:#18261d;
+  --amber:#c48a2c;
+  --purple:#7562a5;
+  --shadow:0 18px 45px rgba(28,47,32,.09);
+}
+
+body{
+  margin:0;
+  background:
+    radial-gradient(circle at 8% 0%,#e3eee3 0,transparent 30%),
+    radial-gradient(circle at 95% 18%,#eee9f7 0,transparent 24%),
+    var(--bg);
+  color:var(--text);
+  font-family:"DM Sans",sans-serif;
+  min-height:100vh;
+  padding:30px 24px 55px;
+}
+
+.app{max-width:1180px;margin:auto}
+
+/* HEADER */
+.topbar{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:34px
+}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{
+  width:42px;height:42px;border-radius:13px;background:var(--dark);
+  color:white;display:grid;place-items:center;font-size:20px;
+  box-shadow:0 8px 20px rgba(24,38,29,.18)
+}
+.brand strong{font-family:"Space Grotesk";font-size:16px}
+.brand span{display:block;color:var(--muted);font-size:11px;margin-top:2px}
+.status{
+  display:flex;align-items:center;gap:8px;color:var(--muted);
+  font-size:12px;background:rgba(255,255,255,.72);
+  border:1px solid var(--line);padding:8px 12px;border-radius:999px
+}
+.dot{width:7px;height:7px;border-radius:50%;background:#5b9b68}
+
+/* HERO */
+.hero{display:grid;grid-template-columns:1.45fr .75fr;gap:24px;margin-bottom:24px}
+.hero-main{
+  background:var(--dark);color:white;border-radius:26px;padding:34px 36px;
+  position:relative;overflow:hidden;box-shadow:var(--shadow)
+}
+.hero-main:after{
+  content:"";position:absolute;width:300px;height:300px;border-radius:50%;
+  border:1px solid rgba(255,255,255,.1);right:-80px;top:-120px
+}
+.kicker{
+  color:#a9c9ae;text-transform:uppercase;letter-spacing:.12em;
+  font-size:11px;font-weight:700;margin-bottom:12px
+}
+.hero h1{
+  font-family:"Space Grotesk";font-size:clamp(31px,4vw,48px);
+  line-height:1.02;letter-spacing:-.045em;margin:0 0 14px
+}
+.hero p{color:#bdc8be;max-width:650px;line-height:1.6;margin:0;font-size:14px}
+.hero-side{
+  background:var(--surface);border:1px solid var(--line);border-radius:26px;
+  padding:27px;box-shadow:var(--shadow);display:flex;flex-direction:column;justify-content:center
+}
+.metric-label{
+  color:var(--muted);font-size:11px;text-transform:uppercase;
+  letter-spacing:.09em;font-weight:700
+}
+.metric-number{font-family:"Space Grotesk";font-size:38px;margin:6px 0}
+.metric-note{color:var(--muted);font-size:12px;line-height:1.5}
+
+/* MAIN */
+.main-grid{display:grid;grid-template-columns:430px 1fr;gap:24px}
+.panel{
+  background:var(--surface);border:1px solid var(--line);border-radius:24px;
+  box-shadow:var(--shadow);padding:26px
+}
+.panel-head{
+  display:flex;justify-content:space-between;align-items:flex-start;
+  padding-bottom:20px;border-bottom:1px solid var(--line);margin-bottom:23px
+}
+.panel-title{font-family:"Space Grotesk";font-size:19px;font-weight:700}
+.panel-sub{color:var(--muted);font-size:12px;margin-top:5px}
+.step{
+  color:var(--green);background:var(--green-soft);border-radius:9px;
+  padding:7px 9px;font-size:10px;font-weight:700
+}
+
+.field{margin-bottom:23px}
+.field:last-of-type{margin-bottom:0}
+.field-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.field-name{font-size:13px;font-weight:600}
+.field-value{font-size:12px;font-weight:700;color:var(--green)}
+input[type=range]{
+  width:100%;height:5px;appearance:none;border-radius:99px;
+  background:#e6ebe4;outline:none
+}
+input[type=range]::-webkit-slider-thumb{
+  appearance:none;width:19px;height:19px;border-radius:50%;
+  background:var(--green);border:4px solid white;
+  box-shadow:0 0 0 1px #a9bea9;cursor:pointer
+}
+input[type=range]::-moz-range-thumb{
+  width:19px;height:19px;border-radius:50%;background:var(--green);
+  border:4px solid white;box-shadow:0 0 0 1px #a9bea9;cursor:pointer
+}
+.scale{
+  display:flex;justify-content:space-between;color:#9aa39a;
+  font-size:9px;margin-top:7px
+}
+.analyze{
+  width:100%;border:0;background:var(--green);color:white;
+  padding:13px;border-radius:12px;margin-top:25px;
+  font-family:"DM Sans";font-weight:700;font-size:13px;cursor:pointer
+}
+.analyze:hover{background:#2d5d40}
+
+/* RESULT */
+.result-panel{padding:0;overflow:hidden}
+.result-top{
+  padding:26px 28px 22px;border-bottom:1px solid var(--line);
+  display:flex;justify-content:space-between;align-items:center
+}
+.result-top h2{font-family:"Space Grotesk";font-size:19px;margin:0}
+.live{font-size:10px;color:var(--green);font-weight:700;background:var(--green-soft);padding:7px 9px;border-radius:8px}
+.result-body{padding:27px 28px}
+.profile{
+  display:flex;gap:16px;align-items:center;margin-bottom:27px
+}
+.profile-icon{
+  width:68px;height:68px;border-radius:19px;background:var(--green-soft);
+  display:grid;place-items:center;font-size:32px
+}
+.overline{
+  color:var(--muted);font-size:10px;text-transform:uppercase;
+  letter-spacing:.1em;font-weight:700
+}
+.profile-name{
+  font-family:"Space Grotesk";font-size:29px;letter-spacing:-.035em;margin-top:4px
+}
+.profile-desc{font-size:12px;color:var(--muted);margin-top:4px}
+
+.chart-title{
+  display:flex;justify-content:space-between;align-items:center;margin-bottom:12px
+}
+.chart-title b{font-size:12px}
+.chart-title span{font-size:10px;color:var(--muted)}
+
+.bars{display:grid;gap:14px}
+.bar-row{display:grid;grid-template-columns:100px 1fr 40px;gap:10px;align-items:center}
+.bar-label{font-size:11px;color:var(--muted)}
+.track{height:8px;background:#e8ece7;border-radius:99px;overflow:hidden}
+.fill{height:100%;background:var(--green-2);border-radius:99px;transition:width .35s}
+.bar-num{text-align:right;font-size:10px;font-weight:700}
+
+.insights{
+  margin-top:28px;display:grid;grid-template-columns:1fr 1fr;gap:12px
+}
+.insight{
+  border:1px solid var(--line);background:var(--surface-2);
+  padding:15px;border-radius:14px
+}
+.insight small{
+  color:var(--muted);font-size:9px;text-transform:uppercase;
+  letter-spacing:.08em;font-weight:700
+}
+.insight strong{display:block;font-size:12px;margin-top:5px;line-height:1.45}
+
+.tech-strip{
+  margin-top:18px;background:#f0f3ef;border-radius:13px;padding:13px 15px;
+  display:flex;justify-content:space-between;align-items:center;gap:12px
+}
+.tech-strip span{font-size:10px;color:var(--muted)}
+.tech{
+  display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end
+}
+.tech b{
+  background:white;border:1px solid var(--line);padding:5px 7px;
+  border-radius:6px;font-size:9px
+}
+
+footer{
+  text-align:center;color:var(--muted);font-size:10px;margin-top:22px
+}
+
+@media(max-width:850px){
+  .hero,.main-grid{grid-template-columns:1fr}
+  .hero-side{min-height:150px}
+}
+@media(max-width:560px){
+  body{padding:20px 14px 40px}
+  .topbar{margin-bottom:22px}
+  .status{display:none}
+  .hero-main{padding:27px 24px}
+  .panel{padding:21px}
+  .result-top,.result-body{padding-left:21px;padding-right:21px}
+  .insights{grid-template-columns:1fr}
+  .bar-row{grid-template-columns:82px 1fr 34px}
+}
+</style>
+</head>
+
+<body>
+<div class="app">
+
+  <div class="topbar">
+    <div class="brand">
+      <div class="logo">✦</div>
+      <div>
+        <strong>Student Pattern Analytics</strong>
+        <span>Advanced Data Mining Mini Project</span>
+      </div>
+    </div>
+    <div class="status"><span class="dot"></span> Analysis engine ready</div>
+  </div>
+
+  <section class="hero">
+    <div class="hero-main">
+      <div class="kicker">Behavioral Data Mining</div>
+      <h1>Discover the pattern<br>behind the routine.</h1>
+      <p>Analyze student behavior using multiple academic and lifestyle features. The system identifies the closest behavioral cluster and converts raw inputs into an interpretable student profile.</p>
+    </div>
+
+    <div class="hero-side">
+      <div class="metric-label">Features analyzed</div>
+      <div class="metric-number">05</div>
+      <div class="metric-note">Attendance, study time, screen time, sleep and assignment completion.</div>
+    </div>
+  </section>
+
+  <main class="main-grid">
+
+    <section class="panel">
+      <div class="panel-head">
+        <div>
+          <div class="panel-title">Student Profile</div>
+          <div class="panel-sub">Adjust the behavioral variables</div>
+        </div>
+        <div class="step">INPUT</div>
+      </div>
+
+      <div class="field">
+        <div class="field-head"><span class="field-name">Attendance</span><span class="field-value" id="v-att">75%</span></div>
+        <input type="range" id="att" min="30" max="100" value="75">
+        <div class="scale"><span>30%</span><span>100%</span></div>
+      </div>
+
+      <div class="field">
+        <div class="field-head"><span class="field-name">Study hours / day</span><span class="field-value" id="v-study">3.2 h</span></div>
+        <input type="range" id="study" min="0" max="10" step=".1" value="3.2">
+        <div class="scale"><span>0 h</span><span>10 h</span></div>
+      </div>
+
+      <div class="field">
+        <div class="field-head"><span class="field-name">Screen time / day</span><span class="field-value" id="v-screen">4.5 h</span></div>
+        <input type="range" id="screen" min="0" max="12" step=".1" value="4.5">
+        <div class="scale"><span>0 h</span><span>12 h</span></div>
+      </div>
+
+      <div class="field">
+        <div class="field-head"><span class="field-name">Sleep / night</span><span class="field-value" id="v-sleep">7.0 h</span></div>
+        <input type="range" id="sleep" min="3" max="11" step=".1" value="7">
+        <div class="scale"><span>3 h</span><span>11 h</span></div>
+      </div>
+
+      <div class="field">
+        <div class="field-head"><span class="field-name">Assignment completion</span><span class="field-value" id="v-asg">70%</span></div>
+        <input type="range" id="asg" min="0" max="100" value="70">
+        <div class="scale"><span>0%</span><span>100%</span></div>
+      </div>
+
+      <button class="analyze" id="discover">Run Pattern Analysis →</button>
+    </section>
+
+    <section class="panel result-panel">
+      <div class="result-top">
+        <h2>Mining Result</h2>
+        <div class="live">● LIVE ANALYSIS</div>
+      </div>
+
+      <div class="result-body">
+        <div class="profile">
+          <div class="profile-icon" id="icon">🌱</div>
+          <div>
+            <div class="overline">Closest behavioral cluster</div>
+            <div class="profile-name" id="name">Balanced Learner</div>
+            <div class="profile-desc" id="desc">A balanced academic and personal routine.</div>
+          </div>
+        </div>
+
+        <div class="chart-title">
+          <b>Behavioral Feature Profile</b>
+          <span>Normalized scale</span>
+        </div>
+
+        <div class="bars" id="meters"></div>
+
+        <div class="insights">
+          <div class="insight">
+            <small>Dominant signal</small>
+            <strong id="dominant">Consistent academic routine</strong>
+          </div>
+          <div class="insight">
+            <small>Pattern interpretation</small>
+            <strong id="interpretation">Academic and lifestyle indicators are relatively balanced.</strong>
+          </div>
+        </div>
+
+        <div class="tech-strip">
+          <span>Data mining pipeline</span>
+          <div class="tech">
+            <b>Preprocessing</b>
+            <b>Feature Scaling</b>
+            <b>Clustering</b>
+            <b>Pattern Analysis</b>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    Student Pattern Analytics · Prototype for Advanced Data Mining Techniques
+  </footer>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const inputs={
+  att:$("att"),study:$("study"),screen:$("screen"),sleep:$("sleep"),asg:$("asg")
+};
+
+function values(){
+  return {
+    att:+inputs.att.value,
+    study:+inputs.study.value,
+    screen:+inputs.screen.value,
+    sleep:+inputs.sleep.value,
+    asg:+inputs.asg.value
+  };
+}
+
+function classify(v){
+  if(v.study>=5 && v.att>=75 && v.asg>=75)
+    return {
+      icon:"📚",name:"Study Focused",
+      desc:"Strong academic consistency with a routine centered around regular study.",
+      dominant:"Study time + academic consistency",
+      interpretation:"High study time, attendance and assignment completion define this cluster."
+    };
+
+  if(v.screen>=7 && v.study<3)
+    return {
+      icon:"📱",name:"Digital Heavy",
+      desc:"A digitally active routine where screen exposure is a major daily feature.",
+      dominant:"High digital activity",
+      interpretation:"Screen time strongly separates this behavioral pattern from the others."
+    };
+
+  if(v.sleep<6 && v.study>=4)
+    return {
+      icon:"🌙",name:"Night Owl",
+      desc:"A study-oriented routine combined with comparatively limited sleep.",
+      dominant:"Study–sleep relationship",
+      interpretation:"Higher study activity alongside lower sleep creates this distinctive pattern."
+    };
+
+  if(v.study<2 && v.asg<55)
+    return {
+      icon:"🌿",name:"Casual Learner",
+      desc:"A lighter academic routine with scope for more consistent study activity.",
+      dominant:"Lower academic activity",
+      interpretation:"Study time and assignment completion are the strongest cluster signals."
+    };
+
+  return {
+    icon:"🌱",name:"Balanced Learner",
+    desc:"A balanced academic and personal routine with consistent study habits.",
+    dominant:"Consistent academic routine",
+    interpretation:"Academic, digital and lifestyle indicators remain relatively balanced."
+  };
+}
+
+function update(){
+  const v=values();
+
+  $("v-att").textContent=v.att+"%";
+  $("v-study").textContent=v.study.toFixed(1)+" h";
+  $("v-screen").textContent=v.screen.toFixed(1)+" h";
+  $("v-sleep").textContent=v.sleep.toFixed(1)+" h";
+  $("v-asg").textContent=v.asg+"%";
+
+  const p=classify(v);
+
+  $("icon").textContent=p.icon;
+  $("name").textContent=p.name;
+  $("desc").textContent=p.desc;
+  $("dominant").textContent=p.dominant;
+  $("interpretation").textContent=p.interpretation;
+
+  const bars=[
+    ["Attendance",v.att],
+    ["Study",Math.min(v.study/8*100,100)],
+    ["Screen time",Math.min(v.screen/10*100,100)],
+    ["Sleep",Math.min(v.sleep/8*100,100)],
+    ["Assignments",v.asg]
+  ];
+
+  $("meters").innerHTML=bars.map(([n,val])=>`
+    <div class="bar-row">
+      <span class="bar-label">${n}</span>
+      <div class="track"><div class="fill" style="width:${Math.round(val)}%"></div></div>
+      <span class="bar-num">${Math.round(val)}%</span>
+    </div>
+  `).join("");
+}
+
+Object.values(inputs).forEach(el=>el.addEventListener("input",update));
+$("discover").addEventListener("click",update);
+update();
+</script>
+</body>
+</html>
